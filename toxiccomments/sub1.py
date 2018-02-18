@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 
@@ -8,10 +9,14 @@ from scipy.sparse import hstack
 from scipy.special import logit, expit
 from tqdm import tqdm
 
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 class_names = ['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']
 
-train = pd.read_csv('F:/Data_Scientist/Textmining/toxiccomments/data/train.csv').fillna(' ')
-test = pd.read_csv('F:/Data_Scientist/Textmining/toxiccomments/data/test.csv').fillna(' ')
+train = pd.read_csv('./data/train.csv').fillna(' ')
+test = pd.read_csv('./data/test.csv').fillna(' ')
 
 train_text = train['comment_text']
 test_text = test['comment_text']
@@ -26,7 +31,7 @@ word_vectorizer = TfidfVectorizer(
     max_features=15000)
 word_vectorizer.fit(all_text)
 train_word_features = word_vectorizer.transform(train_text)
-test_word_features = word_vectorizer.transform(test_text)
+test_word_features = word_vectorizer.transform(test_text)  
 
 char_vectorizer = TfidfVectorizer(
     sublinear_tf=True,
@@ -57,4 +62,4 @@ for class_name in tqdm(class_names):
 print('Total CV score is {}'.format(np.mean(losses)))
 
 submission = pd.DataFrame.from_dict(predictions)
-submission.to_csv('F:/Data_Scientist/Textmining/toxiccomments/output/submission.csv', index=False)
+submission.to_csv('./output/submission.csv', index=False)
